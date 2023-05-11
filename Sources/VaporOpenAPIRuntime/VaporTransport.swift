@@ -4,10 +4,10 @@ import Vapor
 import NIOFoundationCompat
 
 public final class VaporTransport {
-    
+
     /// A routes builder with which to register request handlers.
     internal var routesBuilder: Vapor.RoutesBuilder
-    
+
     /// Creates a new transport.
     /// - Parameter routesBuilder: A routes builder with which to register request handlers.
     public init(routesBuilder: Vapor.RoutesBuilder) {
@@ -17,7 +17,8 @@ public final class VaporTransport {
 
 extension VaporTransport: ServerTransport {
     public func register(
-        _ handler: @Sendable @escaping (OpenAPIRuntime.Request, OpenAPIRuntime.ServerRequestMetadata) async throws -> OpenAPIRuntime.Response,
+        _ handler: @Sendable @escaping (OpenAPIRuntime.Request, OpenAPIRuntime.ServerRequestMetadata)
+        async throws -> OpenAPIRuntime.Response,
         method: OpenAPIRuntime.HTTPMethod,
         path: [RouterPathComponent],
         queryItemNames: Set<String>

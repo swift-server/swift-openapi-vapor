@@ -3,17 +3,17 @@ import XCTVapor
 import OpenAPIRuntime
 
 final class VaporTransportTests: XCTestCase {
-    
+
     var app: Application!
-    
+
     override func setUp() async throws {
         app = Application(.testing)
     }
-    
+
     override func tearDown() async throws {
         app.shutdown()
     }
-    
+
     func testRequestConversion() async throws {
         // POST /hello/{name}
         app.post("hello", ":name") { vaporRequest in
@@ -24,7 +24,7 @@ final class VaporTransportTests: XCTestCase {
                 method: .post,
                 headerFields: [
                     .init(name: "X-Mumble", value: "mumble"),
-                    .init(name: "content-length", value: "4"),
+                    .init(name: "content-length", value: "4")
                 ],
                 body: Data("👋".utf8)
             )
@@ -47,7 +47,7 @@ final class VaporTransportTests: XCTestCase {
             let response = Response(
                 statusCode: 201,
                 headerFields: [
-                    .init(name: "X-Mumble", value: "mumble"),
+                    .init(name: "X-Mumble", value: "mumble")
                 ],
                 body: Data("👋".utf8)
             )
@@ -67,8 +67,7 @@ final class VaporTransportTests: XCTestCase {
 
     func testHandlerRegistration() throws {
         let transport = VaporTransport(routesBuilder: app)
-        try transport.register(
-            { _, _  in OpenAPIRuntime.Response(statusCode: 201) },
+        try transport.register({ _, _  in OpenAPIRuntime.Response(statusCode: 201) },
             method: .post,
             path: [.constant("hello"), .parameter("name")],
             queryItemNames: ["greeting"]
@@ -93,7 +92,7 @@ final class VaporTransportTests: XCTestCase {
             (.options, .OPTIONS),
             (.head, .HEAD),
             (.patch, .PATCH),
-            (.trace, .TRACE),
+            (.trace, .TRACE)
         ])
         try XCTAssert(function: OpenAPIRuntime.HTTPMethod.init(_:), behavesAccordingTo: [
             (.GET, .get),
@@ -103,12 +102,12 @@ final class VaporTransportTests: XCTestCase {
             (.OPTIONS, .options),
             (.HEAD, .head),
             (.PATCH, .patch),
-            (.TRACE, .trace),
+            (.TRACE, .trace)
         ])
     }
 }
 
-fileprivate func XCTAssert<Input, Output>(
+private func XCTAssert<Input, Output>(
     function: (Input) throws -> Output,
     behavesAccordingTo expectations: [(Input, Output)],
     file: StaticString = #file,
