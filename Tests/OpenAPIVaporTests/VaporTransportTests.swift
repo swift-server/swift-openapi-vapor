@@ -1,5 +1,5 @@
 import XCTVapor
-@testable import VaporOpenAPIRuntime
+@testable import OpenAPIVapor
 import OpenAPIRuntime
 
 final class VaporTransportTests: XCTestCase {

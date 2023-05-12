@@ -11,7 +11,7 @@ let package = Package(
         .watchOS(.v9)
     ],
     products: [
-        .library(name: "VaporOpenAPIRuntime", targets: ["VaporOpenAPIRuntime"])
+        .library(name: "OpenAPIVapor", targets: ["OpenAPIVapor"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-openapi-runtime.git", branch: "main"),
@@ -19,16 +19,16 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "VaporOpenAPIRuntime",
+            name: "OpenAPIVapor",
             dependencies: [
                 .product(name: "Vapor", package: "vapor"),
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime")
             ]
         ),
         .testTarget(
-            name: "VaporOpenAPIRuntimeTests",
+            name: "OpenAPIVaporTests",
             dependencies: [
-                "VaporOpenAPIRuntime",
+                "OpenAPIVapor",
                 .product(name: "XCTVapor", package: "vapor")
             ]
         )
