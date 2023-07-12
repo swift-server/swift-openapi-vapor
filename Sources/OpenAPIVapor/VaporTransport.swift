@@ -20,11 +20,11 @@ import NIOFoundationCompat
 public final class VaporTransport {
 
     /// A routes builder with which to register request handlers.
-    internal var routesBuilder: Vapor.RoutesBuilder
+    internal var routesBuilder: any Vapor.RoutesBuilder
 
     /// Creates a new transport.
     /// - Parameter routesBuilder: A routes builder with which to register request handlers.
-    public init(routesBuilder: Vapor.RoutesBuilder) {
+    public init(routesBuilder: any Vapor.RoutesBuilder) {
         self.routesBuilder = routesBuilder
     }
 }
