@@ -54,7 +54,7 @@ final class VaporTransportTests: XCTestCase {
             XCTAssertEqual(
                 try ServerRequestMetadata(
                     from: vaporRequest,
-                    forPath: "hello/{name}/world"
+                    forPath: "/hello/{name}/world"
                 ),
                 expectedRequestMetadata
             )
@@ -86,7 +86,7 @@ final class VaporTransportTests: XCTestCase {
         try transport.register(
             { request, _, _ in (response, nil) },
             method: .post,
-            path: "hello/{name}"
+            path: "/hello/{name}"
         )
         try app.test(
             .POST,

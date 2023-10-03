@@ -92,9 +92,10 @@ extension HTTPTypes.HTTPRequest {
 
 extension OpenAPIRuntime.HTTPBody {
     convenience init(_ vaporRequest: Vapor.Request) {
+        let contentLength = vaporRequest.headers.first(name: "content-length").map(Int.init)
         self.init(
-            AsyncStreamerToByteChunkSequence(body: vaporRequest.body),
-            length: .unknown,
+            vaporRequest.body.map { HTTPBody.ByteChunk([UInt8](buffer: $0)) },
+            length: contentLength?.map { .known($0) } ?? .unknown,
             iterationBehavior: .single
         )
     }
