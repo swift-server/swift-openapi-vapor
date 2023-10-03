@@ -84,7 +84,7 @@ final class VaporTransportTests: XCTestCase {
         let transport = VaporTransport(routesBuilder: app)
         let response = HTTPTypes.HTTPResponse(status: .created)
         try transport.register(
-            { request, _, _ in (response, nil) },
+            { _, _, _ in (response, nil) },
             method: .post,
             path: "/hello/{name}"
         )
