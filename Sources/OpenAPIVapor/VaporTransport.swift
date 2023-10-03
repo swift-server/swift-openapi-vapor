@@ -68,7 +68,7 @@ extension [Vapor.PathComponent] {
             if parameter.hasSuffix("}") {
                 return .parameter(String(parameter.dropLast()))
             } else {
-                return .constant(String(parameter))
+                return .constant(parameter)
             }
         }
     }
