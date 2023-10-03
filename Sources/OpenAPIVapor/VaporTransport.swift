@@ -42,8 +42,8 @@ extension VaporTransport: ServerTransport {
             HTTPMethod(method),
             [PathComponent](path)
         ) { vaporRequest in
-            let request = try await HTTPTypes.HTTPRequest(vaporRequest)
-            let body = try await OpenAPIRuntime.HTTPBody(vaporRequest)
+            let request = try HTTPTypes.HTTPRequest(vaporRequest)
+            let body = OpenAPIRuntime.HTTPBody(vaporRequest)
             let requestMetadata = try OpenAPIRuntime.ServerRequestMetadata(
                 from: vaporRequest,
                 forPath: path
@@ -63,6 +63,7 @@ enum VaporTransportError: Error {
 extension [Vapor.PathComponent] {
     init(_ path: String) {
         #warning("better split?")
+        #warning("is it correct anyway?")
         self = path.split(
             separator: "/",
             omittingEmptySubsequences: false
@@ -77,9 +78,10 @@ extension [Vapor.PathComponent] {
 }
 
 extension HTTPTypes.HTTPRequest {
-    init(_ vaporRequest: Vapor.Request) async throws {
+    init(_ vaporRequest: Vapor.Request) throws {
         let headerFields: HTTPTypes.HTTPFields = .init(vaporRequest.headers)
         let method = try HTTPTypes.HTTPRequest.Method(vaporRequest.method)
+        vaporRequest.query
         #warning("Queries?")
         self.init(
             method: method,
@@ -92,7 +94,7 @@ extension HTTPTypes.HTTPRequest {
 }
 
 extension OpenAPIRuntime.HTTPBody {
-    convenience init(_ vaporRequest: Vapor.Request) async throws {
+    convenience init(_ vaporRequest: Vapor.Request) {
         self.init(
             AsyncStreamerToByteChunkSequence(body: vaporRequest.body),
             length: .unknown,

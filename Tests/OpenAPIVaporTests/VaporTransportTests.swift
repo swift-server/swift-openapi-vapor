@@ -46,8 +46,11 @@ final class VaporTransportTests: XCTestCase {
             let expectedRequestMetadata = ServerRequestMetadata(
                 pathParameters: ["name": "Maria"]
             )
-            let request = try await HTTPTypes.HTTPRequest(vaporRequest)
+            let request = try HTTPTypes.HTTPRequest(vaporRequest)
+            let body = OpenAPIRuntime.HTTPBody(vaporRequest)
+            let collectedBody = try await [UInt8](collecting: body, upTo: .max)
             XCTAssertEqual(request, expectedRequest)
+            XCTAssertEqual(collectedBody, [UInt8]("👋".utf8))
             XCTAssertEqual(
                 try ServerRequestMetadata(
                     from: vaporRequest,
@@ -63,8 +66,7 @@ final class VaporTransportTests: XCTestCase {
                     HTTPField.Name("X-Mumble")!: "mumble"
                 ]
             )
-            let body = OpenAPIRuntime.HTTPBody("👋")
-            return Vapor.Response(response: response, body: body)
+            return Vapor.Response(response: response, body: .init([UInt8]("👋".utf8)))
         }
 
         try app.test(
