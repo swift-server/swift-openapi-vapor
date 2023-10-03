@@ -62,14 +62,11 @@ enum VaporTransportError: Error {
 
 extension [Vapor.PathComponent] {
     init(_ path: String) {
-        #warning("better split?")
-        #warning("is it correct anyway?")
-        self = path.split(
-            separator: "/",
-            omittingEmptySubsequences: false
+        self = path.components(
+            separatedBy: "/{"
         ).map { parameter in
-            if parameter.starts(with: ":") {
-                return .parameter(String(parameter.dropFirst()))
+            if parameter.hasSuffix("}") {
+                return .parameter(String(parameter.dropLast()))
             } else {
                 return .constant(String(parameter))
             }
