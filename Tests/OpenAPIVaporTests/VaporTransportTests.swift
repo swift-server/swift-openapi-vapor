@@ -14,6 +14,7 @@
 
 import XCTVapor
 @testable import OpenAPIVapor
+import HTTPTypes
 import OpenAPIRuntime
 
 final class VaporTransportTests: XCTestCase {
@@ -30,47 +31,47 @@ final class VaporTransportTests: XCTestCase {
 
     func testRequestConversion() async throws {
         // POST /hello/{name}
-        app.post("hello", ":name") { vaporRequest in
+        app.post("hello", ":name", "world") { vaporRequest in
             // Hijack the request handler to test the request-conversion functions.
-            let expectedRequest = Request(
-                path: "/hello/Maria",
-                query: "greeting=Howdy",
+            let expectedRequest = HTTPTypes.HTTPRequest(
                 method: .post,
+                scheme: nil,
+                authority: nil,
+                path: "/hello/Maria/world?greeting=Howdy",
                 headerFields: [
-                    .init(name: "X-Mumble", value: "mumble"),
-                    .init(name: "content-length", value: "4")
-                ],
-                body: Data("👋".utf8)
+                    HTTPField.Name("X-Mumble")!: "mumble",
+                    HTTPField.Name("content-length")!: "4",
+                ]
             )
             let expectedRequestMetadata = ServerRequestMetadata(
-                pathParameters: [ "name": "Maria" ],
-                queryParameters: [ URLQueryItem(name: "greeting", value: "Howdy") ]
+                pathParameters: ["name": "Maria"]
             )
-            let request = try await Request(vaporRequest)
+            let request = try HTTPTypes.HTTPRequest(vaporRequest)
+            let body = OpenAPIRuntime.HTTPBody(vaporRequest)
+            let collectedBody = try await [UInt8](collecting: body, upTo: .max)
             XCTAssertEqual(request, expectedRequest)
+            XCTAssertEqual(collectedBody, [UInt8]("👋".utf8))
             XCTAssertEqual(
                 try ServerRequestMetadata(
                     from: vaporRequest,
-                    forPath: [.constant("hello"), .parameter("name")],
-                    extractingQueryItemNamed: ["greeting"]
+                    forPath: "/hello/{name}/world"
                 ),
                 expectedRequestMetadata
             )
 
             // Use the response-conversion to create the Vapor response for returning.
-            let response = Response(
-                statusCode: 201,
+            let response = HTTPTypes.HTTPResponse(
+                status: .created,
                 headerFields: [
-                    .init(name: "X-Mumble", value: "mumble")
-                ],
-                body: Data("👋".utf8)
+                    HTTPField.Name("X-Mumble")!: "mumble"
+                ]
             )
-            return Vapor.Response(response)
+            return Vapor.Response(response: response, body: .init([UInt8]("👋".utf8)))
         }
 
         try app.test(
             .POST,
-            "/hello/Maria?greeting=Howdy",
+            "/hello/Maria/world?greeting=Howdy",
             headers: ["X-Mumble": "mumble"],
             body: ByteBuffer(string: "👋"),
             afterResponse: { response in
@@ -81,10 +82,11 @@ final class VaporTransportTests: XCTestCase {
 
     func testHandlerRegistration() throws {
         let transport = VaporTransport(routesBuilder: app)
-        try transport.register({ _, _  in OpenAPIRuntime.Response(statusCode: 201) },
+        let response = HTTPTypes.HTTPResponse(status: .created)
+        try transport.register(
+            { _, _, _ in (response, nil) },
             method: .post,
-            path: [.constant("hello"), .parameter("name")],
-            queryItemNames: ["greeting"]
+            path: "/hello/{name}"
         )
         try app.test(
             .POST,
@@ -92,7 +94,7 @@ final class VaporTransportTests: XCTestCase {
             headers: ["X-Mumble": "mumble"],
             body: ByteBuffer(string: "👋"),
             afterResponse: { response in
-                XCTAssertEqual(response.status.code, 201)
+                XCTAssertEqual(response.status, .created)
             }
         )
     }
@@ -108,7 +110,7 @@ final class VaporTransportTests: XCTestCase {
             (.patch, .PATCH),
             (.trace, .TRACE)
         ])
-        try XCTAssert(function: OpenAPIRuntime.HTTPMethod.init(_:), behavesAccordingTo: [
+        try XCTAssert(function: HTTPTypes.HTTPRequest.Method.init(_:), behavesAccordingTo: [
             (.GET, .get),
             (.PUT, .put),
             (.POST, .post),
