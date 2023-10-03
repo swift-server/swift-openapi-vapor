@@ -94,7 +94,7 @@ extension OpenAPIRuntime.HTTPBody {
     convenience init(_ vaporRequest: Vapor.Request) {
         let contentLength = vaporRequest.headers.first(name: "content-length").map(Int.init)
         self.init(
-            vaporRequest.body.map { HTTPBody.ByteChunk([UInt8](buffer: $0)) },
+            vaporRequest.body.map(\.readableBytesView),
             length: contentLength?.map { .known($0) } ?? .unknown,
             iterationBehavior: .single
         )
