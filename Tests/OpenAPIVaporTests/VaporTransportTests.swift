@@ -35,8 +35,8 @@ final class VaporTransportTests: XCTestCase {
             // Hijack the request handler to test the request-conversion functions.
             let expectedRequest = HTTPTypes.HTTPRequest(
                 method: .post,
-                scheme: "http",
-                authority: "localhost",
+                scheme: nil,
+                authority: nil,
                 path: "/hello/Maria?greeting=Howdy",
                 headerFields: [
                     HTTPField.Name("X-Mumble")!: "mumble",

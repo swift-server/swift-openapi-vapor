@@ -81,13 +81,12 @@ extension HTTPTypes.HTTPRequest {
     init(_ vaporRequest: Vapor.Request) throws {
         let headerFields: HTTPTypes.HTTPFields = .init(vaporRequest.headers)
         let method = try HTTPTypes.HTTPRequest.Method(vaporRequest.method)
-        vaporRequest.query
-        #warning("Queries?")
+        let queries = vaporRequest.url.query.map { "?\($0)" } ?? ""
         self.init(
             method: method,
             scheme: vaporRequest.url.scheme,
             authority: vaporRequest.url.host,
-            path: vaporRequest.url.path, // + queries?
+            path: vaporRequest.url.path + queries,
             headerFields: headerFields
         )
     }
