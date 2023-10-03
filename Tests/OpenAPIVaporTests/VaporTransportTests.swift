@@ -31,13 +31,13 @@ final class VaporTransportTests: XCTestCase {
 
     func testRequestConversion() async throws {
         // POST /hello/{name}
-        app.post("hello", ":name") { vaporRequest in
+        app.post("hello", ":name", "world") { vaporRequest in
             // Hijack the request handler to test the request-conversion functions.
             let expectedRequest = HTTPTypes.HTTPRequest(
                 method: .post,
                 scheme: nil,
                 authority: nil,
-                path: "/hello/Maria?greeting=Howdy",
+                path: "/hello/Maria/world?greeting=Howdy",
                 headerFields: [
                     HTTPField.Name("X-Mumble")!: "mumble",
                     HTTPField.Name("content-length")!: "4",
@@ -54,7 +54,7 @@ final class VaporTransportTests: XCTestCase {
             XCTAssertEqual(
                 try ServerRequestMetadata(
                     from: vaporRequest,
-                    forPath: "hello/{name}"
+                    forPath: "hello/{name}/world"
                 ),
                 expectedRequestMetadata
             )
@@ -71,7 +71,7 @@ final class VaporTransportTests: XCTestCase {
 
         try app.test(
             .POST,
-            "/hello/Maria?greeting=Howdy",
+            "/hello/Maria/world?greeting=Howdy",
             headers: ["X-Mumble": "mumble"],
             body: ByteBuffer(string: "👋"),
             afterResponse: { response in
