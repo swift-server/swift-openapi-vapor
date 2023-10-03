@@ -128,18 +128,6 @@ extension Dictionary<String, Substring> {
     }
 }
 
-extension Array where Element == URLQueryItem {
-    init(from vaporRequest: Vapor.Request, queryItemNames: Set<String>) {
-        let queryParameters = queryItemNames.sorted().compactMap { name -> URLQueryItem? in
-            guard let value = try? vaporRequest.query.get(String.self, at: name) else {
-                return nil
-            }
-            return .init(name: name, value: value)
-        }
-        self = queryParameters
-    }
-}
-
 extension Vapor.Response {
     convenience init(response: HTTPTypes.HTTPResponse, body: OpenAPIRuntime.HTTPBody?) {
         self.init(
