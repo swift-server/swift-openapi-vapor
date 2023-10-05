@@ -147,11 +147,17 @@ extension Vapor.Response.Body {
             _ = writer.eventLoop.makeFutureWithTask {
                 do {
                     for try await chunk in body {
-                        try await writer.write(.buffer(ByteBuffer(bytes: chunk))).get()
+                        try await writer.eventLoop.flatSubmit {
+                            writer.write(.buffer(ByteBuffer(bytes: chunk)))
+                        }.get()
                     }
-                    try await writer.write(.end).get()
+                    try await writer.eventLoop.flatSubmit {
+                        writer.write(.end)
+                    }.get()
                 } catch {
-                    try await writer.write(.error(error)).get()
+                    try await writer.eventLoop.flatSubmit {
+                        writer.write(.error(error))
+                    }.get()
                 }
             }
         }
