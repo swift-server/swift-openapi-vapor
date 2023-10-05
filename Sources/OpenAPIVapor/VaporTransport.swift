@@ -145,14 +145,7 @@ extension Vapor.Response.Body {
         }
         let stream: @Sendable (any Vapor.BodyStreamWriter) -> () = { writer in
             _ = writer.eventLoop.makeFutureWithTask {
-                do {
-                    for try await chunk in body {
-                        try await writer.write(.buffer(ByteBuffer(bytes: chunk))).get()
-                    }
-                    try await writer.write(.end).get()
-                } catch {
-                    try await writer.write(.error(error)).get()
-                }
+                await Streaming.write(body: body, writer: writer)
             }
         }
         switch body.length {
