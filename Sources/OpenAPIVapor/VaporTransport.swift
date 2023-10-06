@@ -17,6 +17,7 @@ import OpenAPIRuntime
 import HTTPTypes
 import Vapor
 import NIOFoundationCompat
+import Atomics
 
 public final class VaporTransport {
 
@@ -58,6 +59,7 @@ enum VaporTransportError: Error {
     case unsupportedHTTPMethod(String)
     case duplicatePathParameter([String])
     case missingRequiredPathParameter(String)
+    case multipleBodyIteration
 }
 
 extension [Vapor.PathComponent] {
@@ -143,21 +145,26 @@ extension Vapor.Response.Body {
             self = .empty
             return
         }
+        /// Used to guard the body from being iterated multiple times.
+        /// https://github.com/vapor/vapor/issues/3002
+        let iterated = ManagedAtomic(false)
         let stream: @Sendable (any Vapor.BodyStreamWriter) -> () = { writer in
+            guard iterated.compareExchange(
+                expected: false,
+                desired: true,
+                ordering: .relaxed
+            ).exchanged else {
+                _ = writer.write(.error(VaporTransportError.multipleBodyIteration))
+                return
+            }
             _ = writer.eventLoop.makeFutureWithTask {
                 do {
                     for try await chunk in body {
-                        try await writer.eventLoop.flatSubmit {
-                            writer.write(.buffer(ByteBuffer(bytes: chunk)))
-                        }.get()
+                        try await writer.write(.buffer(ByteBuffer(bytes: chunk))).get()
                     }
-                    try await writer.eventLoop.flatSubmit {
-                        writer.write(.end)
-                    }.get()
+                    try await writer.write(.end).get()
                 } catch {
-                    try await writer.eventLoop.flatSubmit {
-                        writer.write(.error(error))
-                    }.get()
+                    try await writer.write(.error(error)).get()
                 }
             }
         }
