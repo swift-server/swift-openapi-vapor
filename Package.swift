@@ -15,14 +15,16 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-openapi-runtime.git", .upToNextMinor(from: "0.3.0")),
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0")
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.84.4"),
+        .package(url: "https://github.com/apple/swift-atomics", from: "1.2.0")
     ],
     targets: [
         .target(
             name: "OpenAPIVapor",
             dependencies: [
                 .product(name: "Vapor", package: "vapor"),
-                .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime")
+                .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
+                .product(name: "Atomics", package: "swift-atomics")
             ]
         ),
         .testTarget(
