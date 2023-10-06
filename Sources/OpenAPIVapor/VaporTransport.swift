@@ -145,6 +145,8 @@ extension Vapor.Response.Body {
             self = .empty
             return
         }
+        /// Used to guard the body from being iterated multiple times.
+        /// https://github.com/vapor/vapor/issues/3002
         let iterated = ManagedAtomic(false)
         let stream: @Sendable (any Vapor.BodyStreamWriter) -> () = { writer in
             guard iterated.compareExchange(
