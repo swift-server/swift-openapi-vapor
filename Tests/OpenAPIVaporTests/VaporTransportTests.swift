@@ -28,6 +28,30 @@ final class VaporTransportTests: XCTestCase {
     override func tearDown() async throws {
         app.shutdown()
     }
+    
+    func testHeadRequestExplicitContentLength() async throws {
+        let transport = VaporTransport(routesBuilder: app)
+        let response = HTTPTypes.HTTPResponse(
+            status: .ok,
+            headerFields: [
+                .contentLength: "42"
+            ]
+        )
+        try transport.register(
+            { _, _, _ in (response, nil) },
+            method: .head,
+            path: "/test"
+        )
+        try app.test(
+            .HEAD,
+            "/test",
+            afterResponse: { response in
+                XCTAssertEqual(response.status, .ok)
+                let contentLength = response.headers.first(name: .contentLength)
+                XCTAssertEqual(contentLength, "42")
+            }
+        )
+    }
 
     func testRequestConversion() async throws {
         // POST /hello/{name}
