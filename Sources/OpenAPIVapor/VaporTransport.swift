@@ -49,8 +49,12 @@ extension VaporTransport: ServerTransport {
                 from: vaporRequest,
                 forPath: path
             )
-            let response = try await handler(request, body, requestMetadata)
-            return Vapor.Response(response: response.0, body: response.1)
+            let res = try await handler(request, body, requestMetadata)
+            let response = Vapor.Response(response: res.0, body: res.1)
+            if let contentLength = res.0.headerFields.first(where: { $0.name == .contentLength }) {
+                response.headers.replaceOrAdd(name: .contentLength, value: contentLength.value)
+            }
+            return response
         }
     }
 }
