@@ -41,7 +41,8 @@ extension VaporTransport: ServerTransport {
     ) throws {
         self.routesBuilder.on(
             HTTPMethod(method),
-            [PathComponent](path)
+            [PathComponent](path),
+            body: .stream
         ) { vaporRequest in
             let request = try HTTPTypes.HTTPRequest(vaporRequest)
             let body = OpenAPIRuntime.HTTPBody(vaporRequest)
