@@ -102,7 +102,7 @@ extension OpenAPIRuntime.HTTPBody {
         let contentLength = vaporRequest.headers.first(name: "content-length").map(Int.init)
         self.init(
             vaporRequest.body.map(\.readableBytesView),
-            length: contentLength?.map { .known($0) } ?? .unknown,
+            length: contentLength?.map { .known(numericCast($0)) } ?? .unknown,
             iterationBehavior: .single
         )
     }
@@ -175,7 +175,7 @@ extension Vapor.Response.Body {
         }
         switch body.length {
         case let .known(count):
-            self = .init(stream: stream, count: count)
+            self = .init(stream: stream, count: Int(clamping: count))
         case .unknown:
             self = .init(stream: stream)
         }
