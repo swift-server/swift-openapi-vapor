@@ -7,7 +7,7 @@ services:
     build:
       args:
         ubuntu_version: "jammy"
-        swift_version: "5.9"
+        swift_version: "5.8"
 
   test:
     image: swift-openapi-vapor:22.04-5.8
