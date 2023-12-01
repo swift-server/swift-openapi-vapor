@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+
+  runtime-setup:
+    image: swift-openapi-vapor:22.04-5.9
+    build:
+      args:
+        ubuntu_version: "jammy"
+        swift_version: "5.9"
+
+  test:
+    image: swift-openapi-vapor:22.04-5.9
+    environment: []
+      #- SANITIZER_ARG=--sanitize=thread
+
+  shell:
+    image: swift-openapi-vapor:22.04-5.9
