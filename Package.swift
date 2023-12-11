@@ -24,7 +24,7 @@ let package = Package(
         .library(name: "OpenAPIVapor", targets: ["OpenAPIVapor"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-openapi-runtime.git", exact: "1.0.0"),
+        .package(url: "https://github.com/apple/swift-openapi-runtime.git", from: "1.0.0"),
         .package(url: "https://github.com/vapor/vapor.git", from: "4.86.2"),
         .package(url: "https://github.com/apple/swift-atomics.git", from: "1.2.0")
     ],
