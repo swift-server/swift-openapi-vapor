@@ -71,7 +71,7 @@ extension [Vapor.PathComponent] {
     init(_ path: String) {
         self = path.split(
             separator: "/",
-            omittingEmptySubsequences: false
+            omittingEmptySubsequences: true
         ).map { parameter in
             if parameter.first == "{", parameter.last == "}" {
                 return .parameter(String(parameter.dropFirst().dropLast()))

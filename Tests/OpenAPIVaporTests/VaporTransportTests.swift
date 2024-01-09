@@ -28,7 +28,7 @@ final class VaporTransportTests: XCTestCase {
     override func tearDown() async throws {
         app.shutdown()
     }
-    
+
     func testHeadRequestExplicitContentLength() async throws {
         let transport = VaporTransport(routesBuilder: app)
         let response = HTTPTypes.HTTPResponse(
@@ -112,6 +112,9 @@ final class VaporTransportTests: XCTestCase {
             method: .post,
             path: "/hello/{name}"
         )
+
+        XCTAssertTrue(app.routes.all.first?.path == ["hello", ":name"])
+
         try app.test(
             .POST,
             "/hello/Maria?greeting=Howdy",
