@@ -1,0 +1,11 @@
+@Tutorials(name: "Swift OpenAPI Vapor") {
+    @Intro(title: "Working with Swift OpenAPI Generator") {
+        Learn how to use *Swift OpenAPI Vapor* while still having access to the `Request` object.
+    }
+
+    @Chapter(name: "Swift OpenAPI Vapor Essentials") {
+        @Image(source: "image.png")
+
+        @TutorialReference(tutorial: "doc:RequestInjection")
+    }
+}

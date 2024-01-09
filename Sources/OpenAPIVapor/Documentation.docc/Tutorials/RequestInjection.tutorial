@@ -6,9 +6,13 @@
     }
     
     @Section(title: "Adding the `swift-dependencies` library as a dependency of your app") {
-        This tutorial uses [swift-dependencies](https://github.com/pointfreeco/swift-dependencies) to inject the `Request` to the context of APIProtocol, using `TaskLocal` values.
+        This tutorial uses [swift-dependencies](https://github.com/pointfreeco/swift-dependencies) to inject the `Request` to the context of `APIProtocol`, using `TaskLocal` values.
         
-        Make sure you add [swift-dependencies](https://github.com/pointfreeco/swift-dependencies) as a dependency of your app, as well as your target. See [this section](https://github.com/pointfreeco/swift-dependencies?tab=readme-ov-file#installation) for more info. 
+        @Steps {
+            @Step {
+                Make sure you add [swift-dependencies](https://github.com/pointfreeco/swift-dependencies) as a dependency of your app, as well as your target. See [this section](https://github.com/pointfreeco/swift-dependencies?tab=readme-ov-file#installation) for more info.
+            }
+        }
     }
     
     @Section(title: "Adding `request` to `DependencyValues`") {
