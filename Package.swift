@@ -26,7 +26,8 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-openapi-runtime.git", from: "1.0.0"),
         .package(url: "https://github.com/vapor/vapor.git", from: "4.91.1"),
-        .package(url: "https://github.com/apple/swift-atomics.git", from: "1.2.0")
+        .package(url: "https://github.com/apple/swift-atomics.git", from: "1.2.0"),
+        .package(url: "https://github.com/apple/swift-nio-extras", from: "1.22.0"),
     ],
     targets: [
         .target(
@@ -34,7 +35,8 @@ let package = Package(
             dependencies: [
                 .product(name: "Vapor", package: "vapor"),
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
-                .product(name: "Atomics", package: "swift-atomics")
+                .product(name: "Atomics", package: "swift-atomics"),
+                .product(name: "NIOHTTPTypesHTTP1", package: "swift-nio-extras"),
             ],
             swiftSettings: swiftSettings
         ),

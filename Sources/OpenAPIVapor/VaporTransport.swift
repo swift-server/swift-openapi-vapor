@@ -18,6 +18,7 @@ import HTTPTypes
 import Vapor
 import NIOFoundationCompat
 import Atomics
+import NIOHTTPTypesHTTP1
 
 public final class VaporTransport {
 
@@ -84,7 +85,7 @@ extension [Vapor.PathComponent] {
 
 extension HTTPTypes.HTTPRequest {
     init(_ vaporRequest: Vapor.Request) throws {
-        let headerFields: HTTPTypes.HTTPFields = .init(vaporRequest.headers)
+        let headerFields: HTTPTypes.HTTPFields = .init(vaporRequest.headers, splitCookie: true)
         let method = try HTTPTypes.HTTPRequest.Method(vaporRequest.method)
         let queries = vaporRequest.url.query.map { "?\($0)" } ?? ""
         self.init(
@@ -178,55 +179,6 @@ extension Vapor.Response.Body {
             self = .init(stream: stream, count: Int(clamping: count))
         case .unknown:
             self = .init(stream: stream)
-        }
-    }
-}
-
-extension HTTPTypes.HTTPFields {
-    init(_ headers: NIOHTTP1.HTTPHeaders) {
-        self.init(headers.compactMap { name, value in
-            guard let name = HTTPField.Name(name) else {
-                return nil
-            }
-            return HTTPField(name: name, value: value)
-        })
-    }
-}
-
-extension NIOHTTP1.HTTPHeaders {
-    init(_ headers: HTTPTypes.HTTPFields) {
-        self.init(headers.map { ($0.name.rawName, $0.value) })
-    }
-}
-
-extension HTTPTypes.HTTPRequest.Method {
-    init(_ method: NIOHTTP1.HTTPMethod) throws {
-        switch method {
-        case .GET: self = .get
-        case .PUT: self = .put
-        case .POST: self = .post
-        case .DELETE: self = .delete
-        case .OPTIONS: self = .options
-        case .HEAD: self = .head
-        case .PATCH: self = .patch
-        case .TRACE: self = .trace
-        default: throw VaporTransportError.unsupportedHTTPMethod(method.rawValue)
-        }
-    }
-}
-
-extension NIOHTTP1.HTTPMethod {
-    init(_ method: HTTPTypes.HTTPRequest.Method) {
-        switch method {
-        case .get: self = .GET
-        case .put: self = .PUT
-        case .post: self = .POST
-        case .delete: self = .DELETE
-        case .options: self = .OPTIONS
-        case .head: self = .HEAD
-        case .patch: self = .PATCH
-        case .trace: self = .TRACE
-        default: self = .RAW(value: method.rawValue)
         }
     }
 }
