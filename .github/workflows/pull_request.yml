@@ -9,7 +9,7 @@ jobs:
     name: Soundness
     uses: swiftlang/github-workflows/.github/workflows/soundness.yml@main
     with:
-      license_header_check_project_name: "Hummingbird server framework"
+      license_header_check_project_name: "Vapor server framework"
 
 
   unit-tests:
