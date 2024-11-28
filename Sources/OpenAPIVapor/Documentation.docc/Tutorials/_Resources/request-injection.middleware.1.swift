@@ -1,11 +1,11 @@
-import Vapor
 import Dependencies
+import Vapor
 
 struct OpenAPIRequestInjectionMiddleware: AsyncMiddleware {
-    func respond(
-        to request: Request,
-        chainingTo responder: AsyncResponder
-    ) async throws -> Response {
+  func respond(
+    to request: Request,
+    chainingTo responder: AsyncResponder
+  ) async throws -> Response {
 
-    }
+  }
 }
