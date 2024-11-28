@@ -25,7 +25,7 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-openapi-runtime.git", from: "1.0.0"),
-    .package(url: "https://github.com/vapor/vapor.git", from: "4.91.1"),
+    .package(url: "https://github.com/vapor/vapor.git", from: "4.106.7"),
     .package(url: "https://github.com/apple/swift-atomics.git", from: "1.2.0"),
     .package(url: "https://github.com/apple/swift-nio-extras", from: "1.22.0"),
   ],

@@ -23,11 +23,11 @@ final class VaporTransportTests: XCTestCase {
   var app: Application!
 
   override func setUp() async throws {
-    app = Application(.testing)
+    app = try await Application.make(.testing)
   }
 
   override func tearDown() async throws {
-    app.shutdown()
+    try await app.asyncShutdown()
   }
 
   func testHeadRequestExplicitContentLength() async throws {
@@ -43,10 +43,10 @@ final class VaporTransportTests: XCTestCase {
       method: .head,
       path: "/test"
     )
-    try app.test(
+    try await app.test(
       .HEAD,
       "/test",
-      afterResponse: { response in
+      afterResponse: { response async throws in
         XCTAssertEqual(response.status, .ok)
         let contentLength = response.headers.first(name: .contentLength)
         XCTAssertEqual(contentLength, "42")
@@ -94,12 +94,12 @@ final class VaporTransportTests: XCTestCase {
       return Vapor.Response(response: response, body: .init([UInt8]("👋".utf8)))
     }
 
-    try app.test(
+    try await app.test(
       .POST,
       "/hello/Maria/world?greeting=Howdy",
       headers: ["X-Mumble": "mumble"],
       body: ByteBuffer(string: "👋"),
-      afterResponse: { response in
+      afterResponse: { response async throws in
         XCTAssertEqual(response.status.code, 201)
       }
     )
