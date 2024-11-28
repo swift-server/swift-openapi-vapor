@@ -118,7 +118,7 @@ extension OpenAPIRuntime.ServerRequestMetadata {
 extension [String: Substring] {
   init(from vaporRequest: Vapor.Request, forPath path: String) throws {
     let keysAndValues = try [PathComponent](path).compactMap { component throws -> String? in
-      guard case let .parameter(parameter) = component else {
+      guard case .parameter(let parameter) = component else {
         return nil
       }
       return parameter
@@ -179,7 +179,7 @@ extension Vapor.Response.Body {
       }
     }
     switch body.length {
-    case let .known(count):
+    case .known(let count):
       self = .init(stream: stream, count: Int(clamping: count))
     case .unknown:
       self = .init(stream: stream)

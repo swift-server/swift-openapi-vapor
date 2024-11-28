@@ -155,6 +155,7 @@ final class VaporTransportTests: XCTestCase {
   }
 }
 
+// swift-format-ignore: AlwaysUseLowerCamelCase
 private func XCTAssert<Input, Output>(
   function: (Input) throws -> Output,
   behavesAccordingTo expectations: [(Input, Output)],
